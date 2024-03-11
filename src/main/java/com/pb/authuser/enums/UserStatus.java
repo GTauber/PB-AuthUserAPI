@@ -2,5 +2,5 @@ package com.pb.authuser.enums;
 
 public enum UserStatus {
     ACTIVE,
-    BLOCKED
+    EXPIRED, LOCKED, BLOCKED
 }

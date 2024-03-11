@@ -1,8 +1,8 @@
 package com.pb.authuser.service.impl;
 
 import com.pb.authuser.dto.UserDto;
+import com.pb.authuser.enums.UserRole;
 import com.pb.authuser.enums.UserStatus;
-import com.pb.authuser.enums.UserType;
 import com.pb.authuser.models.entity.UserModel;
 import com.pb.authuser.models.exceptions.EmailAlreadyExistsException;
 import com.pb.authuser.models.exceptions.UserNotFoundException;
@@ -63,10 +63,16 @@ public class UserServiceImpl implements UserService {
     private UserModel convertUserDtoToUser(UserDto userDto) {
         var user = new UserModel();
         BeanUtils.copyProperties(userDto, user);
+        applyUserRoleAndStatus(user);
         user.setUuid(UUID.randomUUID().toString());
         user.setUserStatus(UserStatus.ACTIVE);
-        user.setUserType(UserType.USER);
+        user.setUserRole(UserRole.ROLE_USER);
         return user;
+    }
+
+    private void applyUserRoleAndStatus(UserModel user) {
+        user.setUserRole(UserRole.ROLE_USER);
+        user.setUserStatus(UserStatus.ACTIVE);
     }
 
 }
