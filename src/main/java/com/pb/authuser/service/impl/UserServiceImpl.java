@@ -15,6 +15,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -24,6 +25,8 @@ import reactor.core.publisher.Mono;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Mono<List<UserModel>> findAllUsers() {
@@ -39,7 +42,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public Mono<UserModel> registerUser(UserDto userDto) {
         return this.existsByUsername(userDto.getUsername())
-            .then(this.existsByEmail(userDto.getEmail()))
+            .then(this.existsByEmail(userDto.getEmail())).thenReturn(userDto)
+            .doOnNext(user -> userDto.setPassword(passwordEncoder.encode(userDto.getPassword())))
             .then(Mono.defer(() -> {
                 var user = convertUserDtoToUser(userDto);
                 return userRepository.save(user); // assuming save() returns Mono<User>
