@@ -12,4 +12,6 @@ public interface UserService {
     Mono<UserModel> findUserById(Long userId);
 
     Mono<UserModel> registerUser(UserDto userDto);
+
+    Mono<UserDto> findByUsername(String username);
 }

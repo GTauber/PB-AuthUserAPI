@@ -50,6 +50,14 @@ public class UserServiceImpl implements UserService {
             }));
     }
 
+    @Override
+    public Mono<UserDto> findByUsername(String username) {
+        return userRepository.findByUsername(username)
+            .cast(UserModel.class)
+            .switchIfEmpty(Mono.error(UserNotFoundException::new))
+            .map(this::convertUserToUserDto);
+    }
+
     private Mono<Void> existsByUsername(String username) {
         return userRepository.existsByUsername(username)
             .filter(bol -> !bol)
@@ -78,5 +86,12 @@ public class UserServiceImpl implements UserService {
         user.setUserRole(UserRole.ROLE_USER);
         user.setUserStatus(UserStatus.ACTIVE);
     }
+
+    private UserDto convertUserToUserDto(UserModel user) {
+        var userDto = new UserDto();
+        BeanUtils.copyProperties(user, userDto);
+        return userDto;
+    }
+
 
 }
