@@ -1,38 +1,54 @@
 package com.pb.authuser.config.security;
 
+import com.pb.authuser.config.security.converter.ServerHttpBasicOrJWTAuthenticationConverter;
+import com.pb.authuser.config.security.resolvers.JWTReactiveAuthenticationManagerResolver;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity.CsrfSpec;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.web.server.ServerHttpSecurity.FormLoginSpec;
+import org.springframework.security.config.web.server.ServerHttpSecurity.HttpBasicSpec;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 
 @Configuration
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
+@RequiredArgsConstructor
 public class WebSecurityConfig {
+
+    private final JWTReactiveAuthenticationManagerResolver jwtReactiveAuthenticationManagerResolver;
+
+    private final ServerHttpBasicOrJWTAuthenticationConverter serverHttpBasicOrJWTAuthenticationConverter;
+    
+    private final UserDetailsRepositoryReactiveAuthenticationManager defaultManager;
+
+    @Bean
+    public AuthenticationWebFilter authenticationWebFilter() {
+        var authWebFilter = new AuthenticationWebFilter(jwtReactiveAuthenticationManagerResolver);
+        authWebFilter.setServerAuthenticationConverter(serverHttpBasicOrJWTAuthenticationConverter);
+
+        return authWebFilter;
+    }
+
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
             .csrf(CsrfSpec::disable)
             .authorizeExchange(exchanges -> exchanges
-                .pathMatchers(HttpMethod.GET, "/auth").authenticated()
-                .pathMatchers(HttpMethod.POST, "/auth").permitAll()
                 .anyExchange().authenticated()
-            ).formLogin(Customizer.withDefaults())
-            .httpBasic(Customizer.withDefaults())
+            )
+            .authenticationManager(defaultManager)
+            .formLogin(FormLoginSpec::disable)
+            .httpBasic(HttpBasicSpec::disable)
+            .addFilterAfter(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
             .build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
 }

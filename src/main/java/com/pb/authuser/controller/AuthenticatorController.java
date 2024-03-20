@@ -2,17 +2,18 @@ package com.pb.authuser.controller;
 
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
+import com.pb.authuser.config.security.utils.JWTTokenUtil;
 import com.pb.authuser.dto.UserDto;
 import com.pb.authuser.models.entity.Response;
 import com.pb.authuser.models.entity.UserModel;
 import com.pb.authuser.service.UserService;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.CacheControl;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,8 @@ public class AuthenticatorController {
 
     private final UserService userService;
 
+    private final JWTTokenUtil jwtTokenUtil;
+
     @PostMapping(consumes = MimeTypeUtils.APPLICATION_JSON_VALUE, produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     @ResponseStatus(CREATED)
     public Mono<Response<UserModel>> registerUser(@RequestBody UserDto userDto) {
@@ -44,12 +47,20 @@ public class AuthenticatorController {
                 .build());
     }
 
+    @GetMapping("/login")
+    public Mono<Response<String>> login(Authentication authentication) {
+        return Mono.just(Response.<String>builder()
+            .status(OK)
+            .statusCode(OK.value())
+            .message("User logged successfully")
+            .data(Map.of("Token", "Bearer " + jwtTokenUtil.generateToken(authentication)))
+            .build());
+    }
+
     @GetMapping()
+    @PreAuthorize("hasRole('USER')")
     public Mono<String> hello() {
-        ResponseEntity.ok()
-            .cacheControl(CacheControl.maxAge(30, TimeUnit.SECONDS))
-            .build();
-        return Mono.just("Hello, World!");
+        return Mono.just("Hello, user works");
     }
 
 }

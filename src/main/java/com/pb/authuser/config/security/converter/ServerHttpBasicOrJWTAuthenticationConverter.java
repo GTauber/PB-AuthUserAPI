@@ -1,0 +1,38 @@
+package com.pb.authuser.config.security.converter;
+
+import static com.pb.authuser.config.security.utils.JWTTokenUtil.isJWTRequest;
+
+import com.pb.authuser.config.security.authentication.JWTAuthentication;
+import com.pb.authuser.config.security.utils.JWTTokenUtil;
+import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.server.authentication.ServerHttpBasicAuthenticationConverter;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+@Component
+@RequiredArgsConstructor
+public class ServerHttpBasicOrJWTAuthenticationConverter extends ServerHttpBasicAuthenticationConverter {
+
+    private final JWTTokenUtil jwtUtil;
+
+    @Override
+    public Mono<Authentication> convert(ServerWebExchange exchange) {
+        return isJWTRequest(exchange) ?
+        convertToJWTAuthentication(getJWTToken(exchange))
+        : super.convert(exchange);
+    }
+
+    private String getJWTToken(ServerWebExchange exchange) {
+        return Objects.requireNonNull(exchange.getRequest().getHeaders().getFirst("Authorization"))
+            .substring(7);
+    }
+
+    private Mono<Authentication> convertToJWTAuthentication(String token) {
+        var claims = jwtUtil.getIfValid(token);
+        return Mono.just(new JWTAuthentication(claims.getSubject(), jwtUtil.getRolesFromToken(token), token));
+    }
+
+}

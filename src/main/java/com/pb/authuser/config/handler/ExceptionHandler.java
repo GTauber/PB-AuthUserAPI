@@ -75,7 +75,7 @@ public class ExceptionHandler implements WebExceptionHandler {
     private <T extends BaseException> Response<?>  buildResponse(T throwable) {
         return Response.builder()
             .timestamp(LocalDateTime.now())
-            .statusCode(Integer.parseInt(throwable.getErrorCode()))
+//            .statusCode(Integer.parseInt(throwable.getErrorCode())) //FIXME
             .status(throwable.getResponseCode().getStatus())
             .reason(throwable.getMessage())
             .build();
