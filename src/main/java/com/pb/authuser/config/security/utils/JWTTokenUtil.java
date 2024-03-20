@@ -49,17 +49,6 @@ public class JWTTokenUtil {
                 .startsWith(JWT_HEADER_PREFIX);
     }
 
-    private Boolean isTokenExpired(String token) {
-        final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
-    }
-
-    private String populateRoles(Collection<? extends GrantedAuthority> roles) {
-        return roles.stream()
-            .map(GrantedAuthority::getAuthority)
-            .collect(Collectors.joining(","));
-    }
-
     public Claims getIfValid(String token) {
         return isTokenValid(token) ?
             getAllClaimsFromToken(token) : null; //TODO Throws error if not valid!
@@ -73,6 +62,7 @@ public class JWTTokenUtil {
             .orElse(null);
     }
 
+
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
@@ -80,6 +70,17 @@ public class JWTTokenUtil {
 
     public boolean isTokenValid(String token) {
         return (Boolean.FALSE.equals(isTokenExpired(token)));
+    }
+
+    private Boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
+    }
+
+    private String populateRoles(Collection<? extends GrantedAuthority> roles) {
+        return roles.stream()
+            .map(GrantedAuthority::getAuthority)
+            .collect(Collectors.joining(","));
     }
 
     private Claims getAllClaimsFromToken(String token) {

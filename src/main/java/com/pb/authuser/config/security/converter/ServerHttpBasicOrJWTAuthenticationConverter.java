@@ -30,6 +30,7 @@ public class ServerHttpBasicOrJWTAuthenticationConverter extends ServerHttpBasic
             .substring(7);
     }
 
+    //TODO: This JWTAuthentication always born already authenticated, duplicating the logic of the JWTAuthenticationManager, re-think and re-design this.
     private Mono<Authentication> convertToJWTAuthentication(String token) {
         var claims = jwtUtil.getIfValid(token);
         return Mono.just(new JWTAuthentication(claims.getSubject(), jwtUtil.getRolesFromToken(token), token));

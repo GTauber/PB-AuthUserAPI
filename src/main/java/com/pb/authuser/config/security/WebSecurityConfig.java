@@ -42,6 +42,7 @@ public class WebSecurityConfig {
         return http
             .csrf(CsrfSpec::disable)
             .authorizeExchange(exchanges -> exchanges
+                .pathMatchers("auth/register").permitAll()
                 .anyExchange().authenticated()
             )
             .authenticationManager(defaultManager)

@@ -30,10 +30,10 @@ public class UserModel implements UserDetails {
     private Long id;
     private String uuid = java.util.UUID.randomUUID().toString();
     private String name;
-    private String username;
-    private String password;
     private String lastname;
+    private String username;
     private String email;
+    private String password;
     private LocalDate birthday;
     private String fullName;
     private UserStatus userStatus;

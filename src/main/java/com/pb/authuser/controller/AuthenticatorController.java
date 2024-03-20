@@ -35,7 +35,7 @@ public class AuthenticatorController {
 
     private final JWTTokenUtil jwtTokenUtil;
 
-    @PostMapping(consumes = MimeTypeUtils.APPLICATION_JSON_VALUE, produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/register", consumes = MimeTypeUtils.APPLICATION_JSON_VALUE, produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     @ResponseStatus(CREATED)
     public Mono<Response<UserModel>> registerUser(@RequestBody UserDto userDto) {
         return userService.registerUser(userDto)
