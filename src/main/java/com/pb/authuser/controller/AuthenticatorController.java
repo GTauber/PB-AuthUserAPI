@@ -1,6 +1,5 @@
 package com.pb.authuser.controller;
 
-
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
