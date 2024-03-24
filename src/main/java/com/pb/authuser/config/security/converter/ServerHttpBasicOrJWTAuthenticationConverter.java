@@ -1,9 +1,9 @@
 package com.pb.authuser.config.security.converter;
 
-import static com.pb.authuser.config.security.utils.JWTTokenUtil.isJWTRequest;
+import static com.pb.authuser.config.security.utils.JWTUtil.isJWTRequest;
 
 import com.pb.authuser.config.security.authentication.JWTAuthentication;
-import com.pb.authuser.config.security.utils.JWTTokenUtil;
+import com.pb.authuser.config.security.utils.JWTUtil;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class ServerHttpBasicOrJWTAuthenticationConverter extends ServerHttpBasicAuthenticationConverter {
 
-    private final JWTTokenUtil jwtUtil;
+    private final JWTUtil jwtUtil;
 
     @Override
     public Mono<Authentication> convert(ServerWebExchange exchange) {

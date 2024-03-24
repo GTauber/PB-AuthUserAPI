@@ -1,6 +1,6 @@
 package com.pb.authuser.config.security.matchers;
 
-import static com.pb.authuser.config.security.utils.JWTTokenUtil.isJWTRequest;
+import static com.pb.authuser.config.security.utils.JWTUtil.isJWTRequest;
 
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
 import org.springframework.stereotype.Component;

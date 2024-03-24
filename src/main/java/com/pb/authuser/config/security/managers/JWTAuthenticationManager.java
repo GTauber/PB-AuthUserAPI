@@ -1,7 +1,7 @@
 package com.pb.authuser.config.security.managers;
 
 import com.pb.authuser.config.security.authentication.JWTAuthentication;
-import com.pb.authuser.config.security.utils.JWTTokenUtil;
+import com.pb.authuser.config.security.utils.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
@@ -13,14 +13,14 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class JWTAuthenticationManager implements ReactiveAuthenticationManager {
 
-    private final JWTTokenUtil jwtTokenUtil;
+    private final JWTUtil jwtUtil;
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
         return Mono.justOrEmpty(authentication)
             .filter(JWTAuthentication.class::isInstance)
             .cast(JWTAuthentication.class)
-            .filter(auth -> jwtTokenUtil.isTokenValid(auth.getToken()))
+            .filter(auth -> jwtUtil.isTokenValid(auth.getToken()))
             .switchIfEmpty(Mono.error(new BadCredentialsException("Invalid Token")))
             .thenReturn(authentication);
     }

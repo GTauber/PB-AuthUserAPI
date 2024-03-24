@@ -3,10 +3,11 @@ package com.pb.authuser.controller;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
-import com.pb.authuser.config.security.utils.JWTTokenUtil;
 import com.pb.authuser.dto.UserDto;
 import com.pb.authuser.models.entity.Response;
+import com.pb.authuser.models.entity.TokenResponse;
 import com.pb.authuser.models.entity.UserModel;
+import com.pb.authuser.service.AuthenticationService;
 import com.pb.authuser.service.UserService;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -32,7 +33,7 @@ public class AuthenticatorController {
 
     private final UserService userService;
 
-    private final JWTTokenUtil jwtTokenUtil;
+    private final AuthenticationService authenticationService;
 
     @PostMapping(path = "/register", consumes = MimeTypeUtils.APPLICATION_JSON_VALUE, produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     @ResponseStatus(CREATED)
@@ -47,12 +48,12 @@ public class AuthenticatorController {
     }
 
     @GetMapping("/login")
-    public Mono<Response<String>> login(Authentication authentication) {
-        return Mono.just(Response.<String>builder()
+    public Mono<Response<TokenResponse>> login(Authentication authentication) {
+        return Mono.just(Response.<TokenResponse>builder()
             .status(OK)
             .statusCode(OK.value())
             .message("User logged successfully")
-            .data(Map.of("Token", "Bearer " + jwtTokenUtil.generateToken(authentication)))
+            .data(Map.of("Token", authenticationService.generateTokenResponse(authentication)))
             .build());
     }
 

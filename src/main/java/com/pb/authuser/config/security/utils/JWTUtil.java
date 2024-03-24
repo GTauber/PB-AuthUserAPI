@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
 @Component
-public class JWTTokenUtil {
+public class JWTUtil {
 
     private static final String JWT_KEY = "R2FicmllbCBUYXViZXIgw6kgbyBob21lbSBtYWlzIGxpbmRvIGRvIHVuaXZlcnNv";
 
