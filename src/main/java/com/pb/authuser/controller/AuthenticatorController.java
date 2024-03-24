@@ -53,7 +53,7 @@ public class AuthenticatorController {
             .status(OK)
             .statusCode(OK.value())
             .message("User logged successfully")
-            .data(Map.of("Token", authenticationService.generateTokenResponse(authentication)))
+            .data(Map.of("TokenResponse", authenticationService.generateTokenResponse(authentication)))
             .build());
     }
 
