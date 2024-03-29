@@ -35,6 +35,7 @@ public class JWTUtil {
             .issuer("easyAuth")
             .subject(authentication.getName())
             .claim("userId", user.getId())
+            .claim("userUuid", user.getUuid())
             .claim("roles", populateRoles(authentication.getAuthorities()))
             .issuedAt(new Date())
             .expiration(new Date(System.currentTimeMillis() + ONE_HOUR))

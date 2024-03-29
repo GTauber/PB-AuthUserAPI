@@ -12,7 +12,6 @@ import com.pb.authuser.service.UserService;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -56,11 +55,4 @@ public class AuthenticatorController {
             .data(Map.of("TokenResponse", authenticationService.generateTokenResponse(authentication)))
             .build());
     }
-
-    @GetMapping()
-    @PreAuthorize("hasRole('USER')")
-    public Mono<String> hello() {
-        return Mono.just("Hello, user works");
-    }
-
 }

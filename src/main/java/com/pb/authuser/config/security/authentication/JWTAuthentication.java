@@ -34,17 +34,26 @@ public class JWTAuthentication extends AbstractAuthenticationToken implements Se
     @Serial
     private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
 
+    private String issuer;
+
     private final String principal;
 
     private String credentials;
 
     private String token;
 
-    public JWTAuthentication(String principal,
-        Collection<? extends GrantedAuthority> authorities, String token) {
+    private Long userId;
+
+    private String userUuid;
+
+    public JWTAuthentication(String issuer, String principal, String token, Long userId, String userUuid,
+        Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
+        this.issuer = issuer;
         this.principal = principal;
         this.token = token;
+        this.userId = userId;
+        this.userUuid = userUuid;
         super.setAuthenticated(true);
     }
 
