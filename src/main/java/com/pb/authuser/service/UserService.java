@@ -14,4 +14,6 @@ public interface UserService {
     Mono<UserModel> registerUser(UserDto userDto);
 
     Mono<UserDto> findByUsername(String username);
+
+    Mono<UserDto> updateUser(UserDto userDto);
 }

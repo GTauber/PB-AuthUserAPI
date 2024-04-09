@@ -12,6 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto {
 
+    private Long id;
     private String name;
     private String lastname;
     private String username;

@@ -9,6 +9,7 @@ import com.pb.authuser.models.exceptions.UserNotFoundException;
 import com.pb.authuser.models.exceptions.UsernameAlreadyExistsException;
 import com.pb.authuser.repository.UserRepository;
 import com.pb.authuser.service.UserService;
+import com.pb.authuser.utils.CustomBeanUtils;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -56,6 +57,16 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username)
             .cast(UserModel.class)
             .switchIfEmpty(Mono.error(UserNotFoundException::new))
+            .map(this::convertUserToUserDto);
+    }
+
+    @Override
+    public Mono<UserDto> updateUser(UserDto userDto) {
+        return userRepository.findById(userDto.getId())
+            .doOnNext(user -> {
+                CustomBeanUtils.copyNonNullProperties(userDto, user);
+            })
+            .flatMap(userRepository::save)
             .map(this::convertUserToUserDto);
     }
 
